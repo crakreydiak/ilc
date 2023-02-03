@@ -1,3 +1,4 @@
+import { Logger } from '../utils';
 let hooks = [];
 let errorHandler = null;
 let currUrl = window.location.href;
@@ -69,7 +70,7 @@ export function addNavigationHook(fn) {
     }
 
     if (hooks.includes(fn)) {
-        console.warn(`ILC: Provided hook "${fn}" is already existed! Please provide only a unique hook to "addNavigationHook()".`);
+        Logger.error(`ILC: Provided hook "${fn}" is already existed! Please provide only a unique hook to "addNavigationHook()".`);
         return;
     }
 
@@ -88,7 +89,7 @@ export function setNavigationErrorHandler(fn) {
     }
 
     if (typeof errorHandler === 'function') {
-        console.warn(`ILC: Navigation error handler has been set already! Please check that you set navigation error handler only once.`);
+        Logger.error(`ILC: Navigation error handler has been set already! Please check that you set navigation error handler only once.`);
         return;
     }
 

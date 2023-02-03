@@ -9,9 +9,7 @@ import {
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import JsonField from '../JsonField/index';
 
-const Title = ({ record }) => {
-    return (<span>{record ? `Props set "${record.name}"` : ''}</span>);
-};
+import Title from './Title';
 
 const InputForm = ({mode = 'edit', ...props}) => {
     return (

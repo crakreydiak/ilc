@@ -22,6 +22,7 @@ const getApps = async (req: Request, res: Response): Promise<void> => {
         query.where('name', 'like', `%${filters.q}%`);
     }
 
+    // @ts-ignore
     const apps = await query.range(req.query.range as string | undefined);
 
     res.setHeader('Content-Range', apps.pagination.total); //Stub for future pagination capabilities

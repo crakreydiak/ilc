@@ -205,6 +205,36 @@ describe('Router', () => {
             });
         });
 
+        it('should match old routing style correctly', () => {
+          const router = new Router({
+              routes: [{
+                  route: '/hero//*',
+                  template: 'test',
+                  slots: {},
+                  meta: {},
+              }],
+              specialRoutes: {},
+          });
+          const reqUrl = '/hero/test';
+
+          chai.expect(router.match(reqUrl).route).to.be.eql('/hero//*');
+        });
+
+        it('should match new routing style correctly', () => {
+          const router = new Router({
+              routes: [{
+                  route: '/hero/*',
+                  template: 'test',
+                  slots: {},
+                  meta: {},
+              }],
+              specialRoutes: {},
+          });
+          const reqUrl = '/hero/test';
+
+          chai.expect(router.match(reqUrl).route).to.be.eql('/hero/*');
+        });
+
         it('should merge slot props when necessary', () => {
             const router = new Router({
                 routes: [{
@@ -385,6 +415,52 @@ describe('Router', () => {
                     },
                     meta: {
                         ...registryConfigWithRouteThatHasTrailingSlashAtTheEnd.specialRoutes['404'].meta,
+                    },
+                });
+            });
+        });
+
+        describe('when a route contain `/(.*)`', () => {
+            const routeWithSpecialPattern = Object.freeze({
+                route: '/test/(.*)/test',
+                next: false,
+                template: 'specialPatternTemplate',
+                slots: {
+                    specialPattern: {
+                        appName: 'specialPattern',
+                        props: {
+                        },
+                        kind: 'primary',
+                    },
+                },
+                meta: {
+                    isSpecialPattern: true,
+                    dynamicProps: ["test"],
+                },
+            });
+
+            const registryConfigWithSpecialRoute = Object.freeze({
+                ...registryConfig,
+                routes: [
+                    routeWithSpecialPattern,
+                    ...registryConfig.routes
+                ],
+            });
+
+            it('should match request url template', () => {
+                const router = new Router(registryConfigWithSpecialRoute);
+                const reqUrl = '/test/launchpad/test';
+
+                chai.expect(router.match(reqUrl)).to.be.eql({
+                    route: '/test/(.*)/test',
+                    basePath: '/test/launchpad/test',
+                    reqUrl,
+                    template: 'specialPatternTemplate',
+                    specialRole: null,
+                    slots: routeWithSpecialPattern.slots,
+                    meta: {
+                        isSpecialPattern: true,
+                        dynamicProps: ["test"],
                     },
                 });
             });

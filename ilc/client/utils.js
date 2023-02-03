@@ -52,3 +52,27 @@ export function smellsLikeAPromise(promise) {
         typeof promise.catch === "function"
     );
 }
+
+export class Logger {
+    static environment = process.env.NODE_ENV;
+    static defaultStyles = 'font-size: 18px; ';
+    static errorStyles = 'background-color: #F44336; color: #fff;';
+
+    static _print(message, isError) {
+        if (Logger.environment === 'production') return;
+
+        if (typeof message === 'object' && message !== null) {
+            console.dir(message, { depth: null });
+        } else {
+            console.log(`%c${message}`, `${Logger.defaultStyles}${isError && Logger.errorStyles}`);
+        }
+    }
+
+    static log(message) {
+        Logger._print(message, false);
+    }
+
+    static error(message) {
+        Logger._print(message, true);
+    }
+}

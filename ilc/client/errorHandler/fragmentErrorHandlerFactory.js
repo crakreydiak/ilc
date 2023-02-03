@@ -35,7 +35,7 @@ const FRAGMENT_KIND = Object.freeze({
 });
 
 function selectFragmentKind(registryConf, path, appName, slotName) {
-    const appKind = registryConf.apps[appName].kind;
+    const appKind = registryConf.apps[appName]?.kind;
     const slotKind = path.slots[slotName] && path.slots[slotName].kind;
 
     return slotKind || appKind;

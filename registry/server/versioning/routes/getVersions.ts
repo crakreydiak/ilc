@@ -17,6 +17,7 @@ const getVersions = async (req: Request, res: Response): Promise<void> => {
         query.where(_.pick(filters, ['entity_type', 'entity_id', 'created_by']));
     }
 
+    // @ts-ignore
     const dbRes = await query.range(req.query.range as string | undefined);
 
     res.setHeader('Content-Range', dbRes.pagination.total); //Stub for future pagination capabilities

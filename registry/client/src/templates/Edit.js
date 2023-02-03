@@ -8,9 +8,7 @@ import {
     TextField,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 
-const Title = ({ record }) => {
-    return (<span>{record ? `Template "${record.name}"` : ''}</span>);
-};
+import Title from './Title';
 
 const InputForm = ({mode = 'edit', ...props}) => {
     return (

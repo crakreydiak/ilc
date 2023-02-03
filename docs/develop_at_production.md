@@ -1,7 +1,7 @@
 # Develop right at "production"
 
 ILC gives you ability to develop your Micro Frontends in context of the "production" environment.
-This means that you can render your new app or changed version of the existing one right at the 
+This means that you can render your new app or changed version of the existing one right at the
 production website.
 
 This gives you ability to see the final result sooner w/o necessity to mock other Micro Frontends inside your
@@ -39,20 +39,20 @@ And let's try to substitute _News app_ with the one that you'll run locally.
 1. Try to refresh http://demo.microfrontends.online/news/ several times & using "Network" tabs in browser dev tools ensure 
 that some requests now go to the URL we specified before in `exposedUrl` variable.
 1. Now let's try to make some changes in our local _News app_ and see them appeared at our Demo website.
-    - Go to cloned `ilc-demo-apps` repo, open the file `/ilc-demo-apps/apps/news-ssr/src/components/Home.vue` and replace `<h1>Pick a news source</h1>` with `<h1>Hello world</h1>`.
-    - Now switch to your browser and refresh page http://demo.microfrontends.online/news/.
-    - If everything is ok, you will see h1 with text "Hello world".
+   - Go to cloned `ilc-demo-apps` repo, open the file `/ilc-demo-apps/apps/news-ssr/src/components/Home.vue` and replace `<h1>Pick a news source</h1>` with `<h1>Hello world</h1>`.
+   - Now switch to your browser and refresh page <http://demo.microfrontends.online/news/>.
+   - If everything is ok, you will see h1 with text "Hello world".
 1. Last step is to check that SSR works correctly:
-    - Turn off javascript with the help of dev-tools in your browser. e.g. [explanation how to do it for Chrome](https://developers.google.com/web/tools/chrome-devtools/javascript/disable)
-    - And after reload of the page we still see correct page with h1 - Hello world
+   - Turn off javascript with the help of dev-tools in your browser. e.g. [explanation how to do it for Chrome](https://developers.google.com/web/tools/chrome-devtools/javascript/disable)
+   - And after reload of the page we still see correct page with h1 - Hello world
 
 
 
 ## Security considerations
 
-The fact that you can override ILC config for particular browser using cookies introduces a risk of having 
+The fact that you can override ILC config for particular browser using cookies introduces a risk of having
 [website defacement](https://en.wikipedia.org/wiki/Website_defacement) attack with the help of [XSS](https://owasp.org/www-community/attacks/xss/).
-To mitigate this risk ILC by default will restrict all domains and all real IPs (only [private IPv4 addresses](https://en.wikipedia.org/wiki/Private_network) are allowed) specified for all links in configuration. 
+To mitigate this risk ILC by default will restrict all domains and all real IPs (only [private IPv4 addresses](https://en.wikipedia.org/wiki/Private_network) are allowed) specified for all links in configuration.
 
 However you can allow additional origins via property "overrideConfigTrustedOrigins", on "Settings" page of ILC Registry.
 - **default** - any origin is disallowed, except for [private IPv4 addresses](https://en.wikipedia.org/wiki/Private_network)
@@ -120,3 +120,21 @@ document.cookie = `ILC-overrideConfig=${overrideConfig}; path=/;`
 ```
 - since you probably run your MS locally via http and if your production site uses https so you will have problems with mixed content when you try to send request to http from https, so the simplest way to resolve it - just turn off checking in your browser. Details [link](https://docs.adobe.com/content/help/en/target/using/experiences/vec/troubleshoot-composer/mixed-content.html).
 - if you exclude some libs e.g. via ["externals"](https://github.com/namecheap/ilc/blob/e1ea372f822fc95790e73743c5ad7ddf31e3c892/devFragments/people/webpack.config.js#L95) property of webpack config - comment it during developing at production.
+
+## Shared libraries
+
+Shared libraries support the same way of developing like MSs. You just need to provide library name (w/o prefix "@sharedLibrary/") and path to spa-bundle:
+
+```js
+const overrideConfig = encodeURIComponent(
+  JSON.stringify({
+    sharedLibs: {
+      sampleLibrary: {
+        spaBundle: "http://10.1.150.85:9001/bundle.js",
+      },
+    },
+  })
+);
+
+document.cookie = `ILC-overrideConfig=${overrideConfig}; path=/;`;
+```

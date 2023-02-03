@@ -1,5 +1,4 @@
-import React, {Children, cloneElement, useState, useCallback} from 'react';
-import {makeStyles} from '@material-ui/core';
+import React, { useState, useCallback } from 'react';
 import ReactDiffViewer from 'react-diff-viewer';
 import {
     List,
@@ -15,27 +14,11 @@ import {
 } from 'react-admin';
 import {parseJSON} from '../utils/json';
 import {SettingsBackupRestore} from "@material-ui/icons";
-
-const ListActionsToolbar = ({children, ...props}) => {
-    const classes = makeStyles({
-        toolbar: {
-            alignItems: 'center',
-            display: 'flex',
-            marginTop: -1,
-            marginBottom: -1,
-        },
-    });
-
-    return (
-        <div className={classes.toolbar}>
-            {Children.map(children, button => cloneElement(button, props))}
-        </div>
-    );
-};
+import { ListActionsToolbar } from '../components';
 
 const MyFilter = (props) => (
     <Filter {...props}>
-        <SelectInput label="Entity Type" source="entity_type" choices={[{id: 'apps', name: 'Apps'}, {id: 'routes', name: 'Routes'}]} alwaysOn/>
+        <SelectInput label="Entity Type" source="entity_type" choices={[{id: 'apps', name: 'Apps'}, {id: 'routes', name: 'Routes'}, {id: 'shared_libs', name: 'Shared libs'}]} alwaysOn/>
         <TextInput label="Entity ID" source="entity_id" alwaysOn />
         <TextInput label="Created by" source="created_by" alwaysOn />
     </Filter>

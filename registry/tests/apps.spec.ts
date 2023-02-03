@@ -1,6 +1,7 @@
 import nock from 'nock';
 import _ from 'lodash';
 import { request, requestWithAuth, expect } from './common';
+import { muteConsole, unmuteConsole } from './utils/console';
 
 const assetsDiscovery = {
     host: 'http://127.0.0.1:1234',
@@ -21,6 +22,11 @@ const correct = Object.freeze({
     kind: 'primary',
     // dependencies: {},
     // props: {},
+    discoveryMetadata: {
+        foo: 'foo1',
+        bar: 'bar1',
+    },
+    adminNotes: 'Lorem ipsum',
 });
 
 const example = <any>{
@@ -54,6 +60,11 @@ const example = <any>{
             assetsPath: 'http://127.0.0.1:3001/uisamplereactUpdated',
             locationStrategy: 'browserHistoryUpdated',
         },
+        discoveryMetadata: {
+            foo: 'updated foo1',
+            bar: 'updated bar1',
+        },
+        adminNotes: 'Updated Lorem ipsum',
     }),
 };
 example.encodedName = encodeURIComponent(example.correct.name);
@@ -78,6 +89,8 @@ describe(`Tests ${example.url}`, () => {
                 assetsDiscoveryUrl: 789,
                 dependencies: 456,
                 props: 789,
+                discoveryMetadata: 111,
+                adminNotes: 222,
             };
 
             let response = await request.post(example.url)
@@ -94,6 +107,8 @@ describe(`Tests ${example.url}`, () => {
                 '"props" must be of type object\n' +
                 '"configSelector" must be an array\n' +
                 '"ssr" must be of type object\n' +
+                '"discoveryMetadata" must be of type object\n' +
+                '"adminNotes" must be a string\n' +
                 '"name" must be a string'
                 );
 
@@ -123,6 +138,8 @@ describe(`Tests ${example.url}`, () => {
         });
 
         it('should not create a record when a manifest file can not be fetched', async () => {
+            muteConsole();
+
             try {
                 const scope = nock(example.assetsDiscovery.host);
                 scope.log(console.log).get(example.assetsDiscovery.path).delay(0).reply(404);
@@ -130,10 +147,11 @@ describe(`Tests ${example.url}`, () => {
                 const response = await request
                     .post(example.url)
                     .send(example.correctWithAssetsDiscoveryUrl)
-                    .expect(422, `"spaBundle" can not be taken from a manifest file by provided "assetsDiscoveryUrl"`);
+                    .expect(422, `"assetsDiscoveryUrl" is not available. Check the url via browser manually.`);
 
                 expect(response.body).deep.equal({});
             } finally {
+                unmuteConsole();
                 await request.delete(example.url + example.encodedName);
             }
         });
@@ -261,6 +279,8 @@ describe(`Tests ${example.url}`, () => {
                     dependencies: 456,
                     props: 789,
                     kind: 'origin',
+                    discoveryMetadata: 111,
+                    adminNotes: 222,
                 };
 
                 const response = await request.put(example.url + example.encodedName)
@@ -277,7 +297,9 @@ describe(`Tests ${example.url}`, () => {
                         '"props" must be of type object\n' +
                         '"configSelector" must be an array\n' +
                         '"ssr" must be of type object\n' +
-                        '"kind" must be one of [primary, essential, regular, wrapper]'
+                        '"kind" must be one of [primary, essential, regular, wrapper]\n' +
+                        '"discoveryMetadata" must be of type object\n' +
+                        '"adminNotes" must be a string'
                     );
                 expect(response.body).deep.equal({});
             } finally {
@@ -294,6 +316,62 @@ describe(`Tests ${example.url}`, () => {
                     .expect(200);
 
                 expect(response.body).deep.equal(example.updated);
+            } finally {
+                await request.delete(example.url + example.encodedName);
+            }
+        });
+
+        it('should not update a record when a manifest file can not be fetched', async () => {
+            muteConsole();
+
+            try {
+                await request.post(example.url).send(example.correct).expect(200);
+
+                const scope = nock(example.assetsDiscovery.host);
+                scope.log(console.log).get(example.assetsDiscovery.path).delay(0).reply(404);
+
+                const response = await request.put(example.url + example.encodedName)
+                    .send(_.omit(example.correctWithAssetsDiscoveryUrl, 'name'))
+                    .expect(422, `"assetsDiscoveryUrl" is not available. Check the url via browser manually.`);
+
+                expect(response.body).deep.equal({});
+            } finally {
+                unmuteConsole();
+                await request.delete(example.url + example.encodedName);
+            }
+        });
+
+        it('should not update a record when a SPA bundle URL was not specified in a manifest file', async () => {
+            try {
+                await request.post(example.url).send(example.correct).expect(200);
+
+                const scope = nock(example.assetsDiscovery.host);
+                scope.log(console.log).get(example.assetsDiscovery.path).delay(0).reply(200, JSON.stringify({}));
+
+                const response = await request.put(example.url + example.encodedName)
+                    .send(_.omit(example.correctWithAssetsDiscoveryUrl, 'name'))
+                    .expect(422, `"spaBundle" must be specified in the manifest file from provided "assetsDiscoveryUrl" if it was not specified manually`);
+
+                expect(response.body).deep.equal({});
+            } finally {
+                await request.delete(example.url + example.encodedName);
+            }
+        });
+
+        it('should update a record when a SPA bundle URL was specified in a manifest file', async () => {
+            try {
+                await request.post(example.url).send(example.correct).expect(200);
+
+                const scope = nock(example.assetsDiscovery.host);
+                scope.log(console.log).get(example.assetsDiscovery.path).delay(0).reply(200, JSON.stringify(example.manifest));
+
+                const response = await request.put(example.url + example.encodedName)
+                    .send(_.omit(example.correctWithAssetsDiscoveryUrl, 'name'));
+
+                expect(response.body).deep.equal({
+                    ...example.correctWithAssetsDiscoveryUrl,
+                    ...example.manifest,
+                });
             } finally {
                 await request.delete(example.url + example.encodedName);
             }

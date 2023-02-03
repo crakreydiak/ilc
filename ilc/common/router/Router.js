@@ -93,18 +93,23 @@ module.exports = class Router {
 
     #compiler = (routes) => {
         return routes.map(v => {
-            const route = this.#escapeStringRegexp(v.route);
-
+            let route = this.#escapeStringRegexp(v.route);
+            if (v.meta && v.meta.isSpecialPattern && v.meta.dynamicProps && v.meta.dynamicProps.length) {
+                route = v.route
+            }
             let routeExp;
 
             if (v.route === '*') {
                 routeExp = new RegExp(`(\/).*`);
             } else if (v.route === '/') {
                 routeExp = new RegExp(`^(/)$`);
+            } else if (v.route.match(/\/\/\*$/) !== null) {
+                const basePath = route.substring(0, route.length - 3);
+                routeExp = new RegExp(`^(${basePath})/?.*`);
             } else if (v.route.match(/\/\*$/) !== null) {
                 const basePath = route.substring(0, route.length - 3);
 
-                routeExp = new RegExp(`^(${basePath})/?.*`);
+                routeExp = new RegExp(`^(${basePath})(?:$|/.*)`);
             } else {
                 let basePath = route;
 

@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React, { Fragment } from 'react';
 
 import {
     Create,
@@ -19,19 +19,17 @@ import {
 
 import JsonField from '../JsonField/index';
 import * as validators from '../validators';
-
-const Title = ({record}) => {
-    return (<span>{record ? `App "${record.name}"` : ''}</span>);
-};
+import Title from './Title';
+import { APP_KINDS_WITH_WRAPPER } from '../constants';
 
 const selectHasAssetsDiscoveryUrl = (formData) => formData.assetsDiscoveryUrl && formData.assetsDiscoveryUrl.length !== 0;
 const selectWarnMessageDueToAssetsDiscoveryUrl = (formData) => {
     if (!selectHasAssetsDiscoveryUrl(formData)) {
-        return '';
+        return ''
     }
 
-    return `Do not need to specify SPA bundle, CSS bundle, dependencies because they would be fetched and set from assets discovery URL if they exist there`;
-};
+    return `Do not need to specify SPA bundle, CSS bundle, dependencies because they would be fetched and set from assets discovery URL if they exist there`
+}
 
 /**
  * Need to validate 'assetsDiscoveryUrl', 'spaBundle' here because they both depend on each other
@@ -39,19 +37,10 @@ const selectWarnMessageDueToAssetsDiscoveryUrl = (formData) => {
 const validateApp = (values) => {
     const errors = {};
 
-    const assetsDiscoveryUrlShouldBeUrl = validators.url(values.assetsDiscoveryUrl);
-    const spaBundleShouldBeUrl = validators.url(values.spaBundle);
-    const spaBundleShouldBeRequired = values.assetsDiscoveryUrl ? undefined : validators.required(values.spaBundle);
-
-    if (assetsDiscoveryUrlShouldBeUrl !== undefined) {
-        errors.assetsDiscoveryUrl = [];
-        errors.assetsDiscoveryUrl.push(assetsDiscoveryUrlShouldBeUrl);
-    }
-
-    if (spaBundleShouldBeUrl !== undefined || spaBundleShouldBeRequired !== undefined) {
-        errors.spaBundle = [];
-        spaBundleShouldBeUrl && errors.spaBundle.push(spaBundleShouldBeUrl);
-        spaBundleShouldBeRequired && errors.spaBundle.push(spaBundleShouldBeRequired);
+    if (values.assetsDiscoveryUrl) {
+        errors.assetsDiscoveryUrl = validators.url(values.assetsDiscoveryUrl)
+    } else {
+        errors.spaBundle = validators.required(values.spaBundle)
     }
 
     return errors;
@@ -64,15 +53,11 @@ const InputForm = ({mode = 'edit', ...props}) => {
                 {mode === 'edit'
                     ? <TextField source="name" />
                     : <TextInput source="name" fullWidth validate={validators.required} />}
-                <SelectInput source="kind" choices={[
-                    {id: 'primary', name: 'Primary'},
-                    {id: 'essential', name: 'Essential'},
-                    {id: 'regular', name: 'Regular'},
-                    {id: 'wrapper', name: 'Wrapper'},
-                ]} validate={validators.required} />
-                <ReferenceArrayInput reference="shared_props" source="configSelector" label="Shared props selector">
-                    <AutocompleteArrayInput />
-                </ReferenceArrayInput>
+                <SelectInput
+                    source="kind"
+                    choices={APP_KINDS_WITH_WRAPPER}
+                    validate={validators.required}
+                />
                 <FormDataConsumer>
                     {({ formData, ...rest }) => formData.kind !== 'wrapper' &&
                         <ReferenceInput reference="app" source="wrappedWith" label="Wrapped with" filter={{kind: 'wrapper'}} allowEmpty {...rest}>
@@ -80,6 +65,16 @@ const InputForm = ({mode = 'edit', ...props}) => {
                         </ReferenceInput>
                     }
                 </FormDataConsumer>
+                <JsonField
+                    source="discoveryMetadata"
+                    label="Discovery metadata (can be used to retrieve apps filtered by some metadata fields)."
+                />
+                <TextInput
+                    fullWidth
+                    multiline
+                    source="adminNotes"
+                    label="Admin notes (store here some information about the app, e.g. link to git repository, names of the app owners etc)."
+                />
             </FormTab>
             <FormTab label="Assets">
                 <FormDataConsumer>

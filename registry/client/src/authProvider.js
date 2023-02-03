@@ -25,7 +25,7 @@ export default {
             });
     },
     checkError: ({ status }) => {
-        return status === 401 || status === 403
+        return status === 401
             ? Promise.reject()
             : Promise.resolve();
     },
@@ -40,6 +40,6 @@ export default {
     },
     getIdentity: () => {
         const userInfo = Cookies.getJSON('ilc:userInfo');
-        return { id: userInfo.identifier, fullName: userInfo.identifier };
+        return { id: userInfo.identifier, fullName: `${userInfo.identifier} ("${userInfo.role}" access)` };
     }
 };

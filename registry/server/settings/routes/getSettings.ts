@@ -8,6 +8,7 @@ import preProcessResponse from '../services/preProcessResponse';
 
 const getSettings = async (req: Request, res: Response): Promise<void> => {
     const query = db.select().from('settings');
+    // @ts-ignore
     const settings = await query.range(req.query.range as string | undefined);
 
     res.setHeader('Content-Range', settings.pagination.total);

@@ -1,10 +1,12 @@
+import { Logger } from '../utils';
+
 let ilcAlreadyCrashed = false;
 
 window.addEventListener('ilc:crash', () => ilcAlreadyCrashed = true);
 
 export default function (err, errInfo) {
     if (ilcAlreadyCrashed) {
-        console.info(`Ignoring error as we already crashed...\n${err.stack}`);
+        Logger.log(`Ignoring error as we already crashed...\n${err.stack}`);
         return; // Ignoring all consequent errors after crash
     }
 
@@ -17,12 +19,12 @@ export default function (err, errInfo) {
         window.newrelic.noticeError(err, infoData);
     }
 
-    console.error(JSON.stringify({
-        type: err.name,
-        message: err.message,
-        stack: err.stack.split("\n"),
-        additionalInfo: infoData,
-    }), err);
+  Logger.error({
+      type: err.name,
+      message: err.message,
+      stack: err.stack.split("\n"),
+      additionalInfo: infoData,
+  });
 }
 
 const msgRegexps = [

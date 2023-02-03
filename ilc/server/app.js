@@ -1,3 +1,4 @@
+const newrelic = require("newrelic");
 const _ = require('lodash');
 const config = require('config');
 const fastify = require('fastify');
@@ -30,6 +31,20 @@ module.exports = (registryService, pluginManager) => {
         await i18nOnRequest(req, reply);
     });
 
+    app.addHook('onRequest', async (req, reply) => {
+        req.raw.crakLabelState = {
+          params: { ...removeBackOffersParams(removeDoubleParams(req?.query || {})) },
+        };
+
+        const i18nV2OnRequest = onRequestFactoryI18nV2();
+        await i18nV2OnRequest(req, reply);
+    });
+
+    app.addHook('onRequest', async (req, _reply) => {
+        const {hostname, ip, headers, query} = req;
+        console.log(JSON.stringify({query, hostname, ip, headers}, null, 2));
+    });
+
     const tailor = tailorFactory(
         registryService,
         config.get('cdnUrl'),
@@ -52,24 +67,40 @@ module.exports = (registryService, pluginManager) => {
     app.get('/_ilc/500', async () => { throw new Error('500 page test error') });
 
     app.all('*', async (req, res) => {
-        const currentDomain = req.hostname;
+        let currentDomain = getHostnameFromHeaderHost(req.headers["x-request-host"] || process.env.LOCAL_X_REQUEST_HOST);
         let registryConfig = (await registryService.getConfig({ filter: { domain: currentDomain } })).data;
 
-        const url = req.raw.url;
-        const urlProcessor = new UrlProcessor(registryConfig.settings.trailingSlash);
+        const url = removeEndSlashUrl(req.raw.url);
+        req.raw.originalUrl = removeEndSlashUrl(req.raw.originalUrl);
+
+        const urlProcessor = new UrlProcessor(
+          registryConfig.settings.trailingSlash
+        );
         const processedUrl = urlProcessor.process(url);
 
         if (processedUrl !== url) {
-            res.redirect(processedUrl);
-            return;
+          res.redirect(processedUrl);
+          return;
         }
 
         req.headers['x-request-host'] = req.hostname;
         req.headers['x-request-uri'] = url;
 
-        registryConfig = mergeConfigs(registryConfig, parseOverrideConfig(req.headers.cookie, registryConfig.settings.overrideConfigTrustedOrigins));
+        const overrideConfigs = parseOverrideConfig(
+            req.headers.cookie,
+            registryConfig.settings.overrideConfigTrustedOrigins
+        );
+        // Excluding LDE related transactions from NewRelic
+        if (overrideConfigs !== null) {
+            req.raw.ldeRelated = true;
+            newrelic.getTransaction().ignore();
+        }
+        registryConfig = mergeConfigs(registryConfig, overrideConfigs);
 
-        const unlocalizedUrl = i18n.unlocalizeUrl(registryConfig.settings.i18n, url);
+        const unlocalizedUrl = i18n.unlocalizeUrl(
+            registryConfig.settings.i18n,
+            url
+        );
         req.raw.registryConfig = registryConfig;
         req.raw.router = new ServerRouter(req.log, req.raw, unlocalizedUrl);
 

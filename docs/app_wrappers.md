@@ -8,7 +8,7 @@ and being able to control it from a single place.
 ![App Wrappers Diagram](./assets/app_wrappers_diagram.svg)
 
 This is useful if you're building a store where pages for different products will be developed by different teams and so
-will reside in different Micro Frontends. In this case you may want to extract logic that check if product has been already 
+will reside in different Micro Frontends. In this case you may want to extract logic that check if product has been already
 purchased by the customer to standalone app which would perform the check and render some UI for purchase if necessary.
 
 ## Registry configuration

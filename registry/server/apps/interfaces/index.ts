@@ -17,12 +17,14 @@ export default interface App {
     configSelector?: string,
     ssr: string, // JSON({ src: string, timeout: number })
     wrappedWith?: string,
+    discoveryMetadata?: string, // JSON({ [propName: string]: any })
+    adminNotes?: string,
 };
 
 export const appNameSchema = Joi.string().trim().min(1);
 
 const commonApp = {
-    spaBundle: Joi.string().trim().uri().default(null),
+    spaBundle: Joi.string().default(null),
     cssBundle: Joi.string().trim().uri().default(null),
     assetsDiscoveryUrl: Joi.string().trim().uri().default(null),
     dependencies: Joi.object().default({}),
@@ -50,6 +52,8 @@ const commonApp = {
             return value;
         }),
     }),
+    discoveryMetadata: Joi.object().default({}),
+    adminNotes: Joi.string().trim().default(null),
 };
 
 export const partialAppSchema = Joi.object({

@@ -16,6 +16,10 @@ function encode(val) {
 }
 
 function decode(val) {
+    if (!val) {
+      return {};
+    }
+
     const vals = val.split(':');
     if (vals.length < 2) {
         return {};

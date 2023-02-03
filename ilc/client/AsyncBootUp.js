@@ -1,3 +1,5 @@
+import { Logger } from './utils';
+
 const System = window.System;
 
 export default class AsyncBootUp {
@@ -8,7 +10,7 @@ export default class AsyncBootUp {
     #appsWaitingForSlot = {};
     #readySlots = [];
 
-    constructor(logger = window.console, performance = window.performance) {
+    constructor(logger = Logger, performance = window.performance) {
         this.#logger = logger;
         this.#performance = performance;
         this.#performanceStart = this.#performance.now();
@@ -42,7 +44,7 @@ export default class AsyncBootUp {
 
         if (!this.#afterRoutingEvent) {
             const milliseconds = this.#performance.now() - this.#performanceStart;
-            this.#logger.info(`ILC: Registering app @${slotName} after ${milliseconds} milliseconds.`);
+            this.#logger.log(`ILC: Registering app @${slotName} after ${milliseconds} milliseconds.`);
         }
 
         const slotEl = document.getElementById(slotName);
@@ -66,15 +68,11 @@ export default class AsyncBootUp {
                 res.wrapperPropsOverride = conf.wrapperPropsOverride;
             }
 
-            if (conf.dependencies) {
-                for (let id in conf.dependencies) {
-                    if (conf.dependencies.hasOwnProperty(id)) {
-                        System.overrideImportMap(id, conf.dependencies[id]);
-                    }
-                }
-            }
+          if (conf.dependencies) {
+              Object.keys(conf?.dependencies).forEach((depKey) => System.overrideImportMap(depKey, conf.dependencies[depKey]));
+          }
 
-            overridesEl.parentNode.removeChild(overridesEl);
+          overridesEl.parentNode.removeChild(overridesEl);
         }
 
         return res;

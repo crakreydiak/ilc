@@ -85,8 +85,9 @@ module.exports = class Registry {
         try {
             res = await axios.get(tplUrl, { responseType: 'json' });
         } catch (e) {
+            console.log(process.env);
             throw new errors.RegistryError({
-                message: `Error while requesting config from registry`,
+                message: `Error while requesting config from registry ${this.#address}api/v1/config`,
                 cause: e,
                 data: {
                     requestedUrl: tplUrl
@@ -107,8 +108,9 @@ module.exports = class Registry {
         try {
             res = await axios.get(tplUrl, { responseType: 'json' });
         } catch (e) {
+            console.log(process.env);
             throw new errors.RegistryError({
-                message: `Error while requesting rendered template "${templateName}" from registry`,
+                message: `Error while requesting rendered template "${templateName}" from registry ${tplUrl.toString()}`,
                 cause: e,
                 data: {
                     requestedUrl: tplUrl
@@ -129,8 +131,9 @@ module.exports = class Registry {
         try {
             res = await axios.get(url, { responseType: 'json' });
         } catch (e) {
+            console.log(process.env);
             throw new errors.RegistryError({
-                message: `Error while requesting routerDomains from registry`,
+                message: `Error while requesting routerDomains from registry ${url.toString()}`,
                 cause: e,
                 data: {
                     requestedUrl: url

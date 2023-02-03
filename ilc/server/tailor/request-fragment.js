@@ -6,14 +6,16 @@ const url = require('url');
 const Agent = require('agentkeepalive');
 const HttpsAgent = require('agentkeepalive').HttpsAgent;
 const deepmerge = require('deepmerge');
+const errors = require('./errors');
+const { generateRouteProps } = require('../../common/utils')
 
 // By default tailor supports gzipped response from fragments
 const requiredHeaders = {
     'accept-encoding': 'gzip, deflate'
 };
 
-const kaAgent = new Agent();
-const kaAgentHttps = new HttpsAgent();
+const kaAgent = new Agent({ freeSocketTimeout: 750 });
+const kaAgentHttps = new HttpsAgent({ freeSocketTimeout: 750 });
 
 /**
  * Simple Request Promise Function that requests the fragment server with
@@ -34,6 +36,12 @@ module.exports = (filterHeaders, processFragmentResponse) => function requestFra
 ) {
     return new Promise((resolve, reject) => {
         const currRoute = request.router.getRoute();
+        const extraProps = { ...request.crakLabelState };
+        let routeProps;
+        routeProps = generateRouteProps(currRoute)
+
+        // delete request.crakLabelState; // We don't need it at client side
+        const { lang, params } = extraProps;
 
         if (attributes.wrapperConf) {
             const wrapperConf = attributes.wrapperConf;
@@ -41,8 +49,8 @@ module.exports = (filterHeaders, processFragmentResponse) => function requestFra
                 route: currRoute,
                 baseUrl: wrapperConf.src,
                 appId: wrapperConf.appId,
-                props: wrapperConf.props,
-                ignoreBasePath: true
+                props: { ...wrapperConf.props, lang, params, ...routeProps },
+                ignoreBasePath: true,
             });
 
             const fragmentRequest = makeRequest(
@@ -82,19 +90,26 @@ module.exports = (filterHeaders, processFragmentResponse) => function requestFra
                     reject(e);
                 }
             });
-            fragmentRequest.on('error', reject);
+            fragmentRequest.on('error', (error) => {
+                reject(
+                    new errors.FragmentRequestError({
+                        message: `Error during SSR request to fragment wrapper at URL: ${fragmentUrl}`,
+                        cause: error,
+                    })
+                );
+            });
             fragmentRequest.end();
         } else {
             const reqUrl = makeFragmentUrl({
                 route: currRoute,
                 baseUrl: fragmentUrl,
                 appId: attributes.id,
-                props: attributes.appProps,
+                props: { ...attributes.appProps, lang, params, ...routeProps },
             });
 
             const fragmentRequest = makeRequest(
                 reqUrl,
-                {...filterHeaders(attributes, request), ...requiredHeaders},
+                { ...filterHeaders(attributes, request), ...requiredHeaders },
                 attributes.timeout,
                 attributes.ignoreInvalidSsl,
             );
@@ -112,8 +127,15 @@ module.exports = (filterHeaders, processFragmentResponse) => function requestFra
                     reject(e);
                 }
             });
-            fragmentRequest.on('error', reject);
-            fragmentRequest.end();
+        fragmentRequest.on('error', (error) => {
+            reject(
+                new errors.FragmentRequestError({
+                    message: `Error during SSR request to fragment at URL: ${fragmentUrl}`,
+                    cause: error,
+                })
+            );
+        });
+        fragmentRequest.end();
         }
     });
 }
@@ -128,6 +150,10 @@ function makeFragmentUrl({route, baseUrl, appId, props, ignoreBasePath = false})
     };
 
     url.searchParams.append('routerProps', Buffer.from(JSON.stringify(reqProps)).toString('base64'));
+
+    if (route.route === '/*') {
+        reqProps.basePath = '/';
+    }
 
     if (props) {
         url.searchParams.append('appProps', Buffer.from(JSON.stringify(props)).toString('base64'));

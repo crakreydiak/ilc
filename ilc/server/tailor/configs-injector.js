@@ -32,6 +32,13 @@ module.exports = class ConfigsInjector {
             delete request.ilcState.locale; // We don't need it at client side
         }
 
+        if (request.crakLabelState && request.crakLabelState.lang) {
+            document = document.replace(
+                "<html",
+                `<html lang="${request.crakLabelState.lang}"`
+            );
+        }
+
         const routeAssets = this.#getRouteAssets(registryConfig.apps, slots);
         const ilcCss = this.#wrapWithIgnoreDuringParsing(
             ...routeAssets.stylesheetLinks,

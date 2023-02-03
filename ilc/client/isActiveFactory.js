@@ -1,5 +1,6 @@
 import {triggerAppChange} from './navigationEvents';
 import transactionManager, {slotWillBe} from './TransactionManager';
+import { Logger } from './utils';
 
 export const createFactory = (triggerAppChange, handlePageTransaction, slotWillBe) => (router, appName, slotName) => {
     let reload = false;
@@ -25,7 +26,7 @@ export const createFactory = (triggerAppChange, handlePageTransaction, slotWillB
                 window.addEventListener('single-spa:app-change', function singleSpaAppChange() {
                     window.removeEventListener('single-spa:app-change', singleSpaAppChange);
                     //TODO: need to consider addition of the new update() hook to the adapter. So it will be called instead of re-mount, if available.
-                    console.log(`ILC: Triggering app re-mount for ${appName} due to changed props.`);
+                    Logger.log(`ILC: Triggering app re-mount for ${appName} due to changed props.`);
 
                     reload = true;
 

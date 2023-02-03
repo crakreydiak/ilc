@@ -15,9 +15,7 @@ import {
 import * as validators from '../validators';
 import {types} from './dataTransform';
 
-const Title = (props) => {
-    return (<span>{props.record ? `Setting "${props.record.key}"` : ''}</span>);
-};
+import Title from './Title';
 
 const MyToolbar = (props) => {
     return (

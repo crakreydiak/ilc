@@ -1,3 +1,6 @@
+// This line must come before importing any instrumented module.
+const tracer = require('dd-trace').init()
+
 const path = require('path');
 
 process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../config');

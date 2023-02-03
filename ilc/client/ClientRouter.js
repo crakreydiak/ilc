@@ -3,6 +3,8 @@ import debug from 'debug';
 
 import Router from '../common/router/Router';
 import * as errors from '../common/router/errors';
+import { isSpecialUrl } from 'ilc-sdk/app';
+import { Logger } from './utils';
 
 export default class ClientRouter {
     errors = errors;
@@ -30,7 +32,7 @@ export default class ClientRouter {
         },
         singleSpa,
         location = window.location,
-        logger = window.console
+        logger = Logger
     ) {
         this.#singleSpa = singleSpa;
         this.#location = location;
@@ -78,7 +80,7 @@ export default class ClientRouter {
             this.#currentRoute = this.#router.match(a.pathname + a.search);
 
             base.remove();
-            this.#logger.warn(
+            this.#logger.error(
                 'ILC: <base> tag was used only for initial rendering and removed afterwards.\n' +
                 'Currently, ILC does not support it fully.\n' +
                 'Please open an issue if you need this functionality.'
@@ -145,17 +147,9 @@ export default class ClientRouter {
             this.#currentUrl = newUrl;
         }
 
-        if (this.#currentRoute && this.#prevRoute.template !== this.#currentRoute.template) {
-            throw new this.errors.RouterError({
-                message:
-                    'Base template was changed.\n' +
-                    'Currently, ILC does not handle it.\n' +
-                    'Please open an issue if you need this functionality.',
-                data: {
-                    prevTemplate: this.#prevRoute.template,
-                    currentTemplate: this.#currentRoute.template
-                },
-            });
+        const isBaseTemplateChanged = this.#currentRoute && this.#prevRoute.template !== this.#currentRoute.template;
+        if (isBaseTemplateChanged) {
+            this.#location.href = this.#currentUrl;
         }
     };
 
@@ -176,15 +170,14 @@ export default class ClientRouter {
             : event.target.closest('a');
         const href = anchor && anchor.getAttribute('href');
 
-        if (event.defaultPrevented || !href) {
+        if (event.defaultPrevented || href === null || !['', '_self'].includes(anchor.target) || isSpecialUrl(href)) {
             return;
         }
 
         const {specialRole} = this.match(href);
 
         if (specialRole === null) {
-            this.#debug(`Calling singleSpa.navigateToUrl("${href}")`);
-            this.#singleSpa.navigateToUrl(href);
+            window.location.href = href;
             event.preventDefault();
         }
     };
@@ -193,13 +186,13 @@ export default class ClientRouter {
         const appId = e.detail && e.detail.appId;
         const mountedApps = this.#singleSpa.getMountedApps();
         if (!mountedApps.includes(appId)) {
-            return console.warn(
+            return this.#logger.error(
                 `ILC: Ignoring special route "${specialRouteId}" trigger which came from not mounted app "${appId}". ` +
                 `Currently mounted apps: ${mountedApps.join(', ')}.`
             );
         }
 
-        console.log(`ILC: Special route "${specialRouteId}" was triggered by "${appId}" app. Performing rerouting...`);
+        this.#logger.log(`ILC: Special route "${specialRouteId}" was triggered by "${appId}" app. Performing rerouting...`);
         this.#forceSpecialRoute = {id: specialRouteId, url: this.#getCurrUrl(true)};
         this.#singleSpa.triggerAppChange(); //This call would immediately invoke "single-spa:before-routing-event" and start apps mount/unmount process
     };

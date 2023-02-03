@@ -15,6 +15,7 @@ import authEntities from './authEntities';
 import settings from './settings';
 import versioning from './versioning';
 import routerDomains from './routerDomains';
+import sharedLibs from './sharedLibs';
 
 render(
     <Admin
@@ -23,17 +24,31 @@ render(
         dataProvider={dataProvider}
         title="ILC Registry"
         layout={Layout}
+        disableTelemetry={true}
     >
-        {permissions => [
-            <Resource name="app" {...apps} />,
-            <Resource name="shared_props" {...sharedProps} />,
-            <Resource name="template" {...templates} />,
-            <Resource name="route" {...appRoutes} />,
-            <Resource name="router_domains" {...routerDomains} />,
-            <Resource name="auth_entities" {...authEntities} />,
-            <Resource name="settings" {...settings} />,
-            <Resource name="versioning" {...versioning} />,
-        ]}
-    </Admin>,
-    document.getElementById('root')
+        {permissions => {
+            const filterPermissions = (pages) => {
+                if (permissions === "readonly") {
+                    return {
+                        ...pages,
+                        edit: pages.show,
+                    };
+                }
+
+            return pages;
+            };
+
+      return [
+        <Resource name="app" {...filterPermissions(apps)} />,
+        <Resource name="shared_props" {...filterPermissions(sharedProps)} />,
+        <Resource name="shared_libs" {...filterPermissions(sharedLibs)} />,
+        <Resource name="template" {...filterPermissions(templates)} />,
+        <Resource name="route" {...filterPermissions(appRoutes)} />,
+        <Resource name="router_domains" {...filterPermissions(routerDomains)} />,
+        <Resource name="auth_entities" {...filterPermissions(authEntities)} />,
+        <Resource name="settings" {...filterPermissions(settings)} />,
+        <Resource name="versioning" {...filterPermissions(versioning)} />,
+      ]}}
+  </Admin>,
+  document.getElementById('root')
 );

@@ -7,6 +7,7 @@ import noticeError from './noticeError';
 import {appIdToNameAndSlot} from '../../common/utils';
 import internalErrorHandler from './internalErrorHandler';
 import navigationErrors from '../navigationEvents/errors';
+import { Logger } from '../utils';
 
 const System = window.System;
 
@@ -48,7 +49,7 @@ export default function (registryConf, getCurrentPath, setNavigationErrorHandler
     // Initializing 500 error page to cache template of this page
     // to avoid a situation when localhost can't return this template in future
     registryService.preheat()
-        .then(() => console.log('ILC: Registry service preheated successfully'))
+        .then(() => Logger.log('ILC: Registry service preheated successfully'))
         .catch((err) => {
             noticeError(err, {
                 errorId: uuidv4(),

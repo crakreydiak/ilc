@@ -363,12 +363,9 @@ describe('client router', () => {
                 location.pathname = registryConfig.routes[3].route;
                 location.search = '?throw=error';
 
-                chai.expect(eventName).to.be.eql(singleSpaBeforeRoutingEventName);
-                chai.expect(eventListener).to.throw(
-                    'Base template was changed.\n' +
-                    'Currently, ILC does not handle it.\n' +
-                    'Please open an issue if you need this functionality.'
-                );
+                eventListener();
+
+                chai.expect(location.href).to.be.eql(registryConfig.routes[3].route + '?throw=error');
             } finally {
                 addEventListener.restore();
             }
@@ -489,6 +486,24 @@ describe('client router', () => {
                         But event click is going to be prevented previously.
                         So I should not forward you to registered micro front-end page.
                     </span>
+                </a>
+            `;
+
+            document.body.appendChild(anchor.ref);
+            document.getElementById(anchor.id).dispatchEvent(clickEvent);
+
+            chai.expect(singleSpa.navigateToUrl.called).to.be.false;
+            chai.expect(clickEvent.defaultPrevented).to.be.false;
+        });
+
+        it('should NOT handle click events on anchors with target="_blank"', () => {
+            const anchor = {
+                id: 'click-me',
+            };
+
+            anchor.ref = html`
+                <a id="${anchor.id}" target="_blank">
+                    Hi there! I am anchor tag and I do have target="_blank" attribute.
                 </a>
             `;
 

@@ -1,7 +1,7 @@
 {
-    "name": "registry",
+    "name": "@crakmedia-repo/cfa-registry",
     "version": "1.0.0",
-    "description": "",
+    "description": "Registry that we will need to delete and replace",
     "main": "build/index.js",
     "scripts": {
         "tsc": "tsc",
@@ -9,7 +9,7 @@
         "dev": "nodemon -e ts,json5 --exec \"tsc --incremental && npm run start\"",
         "build": "npm run compile && cd ./client && npm run build",
         "start": "node -r source-map-support/register ./build/server/index.js",
-        "start-docker": "npm run migrate && npm start",
+        "start:docker": "npm run migrate && npm start",
         "knex": "knex",
         "migrate": "knex --knexfile config/knexfile.ts migrate:latest",
         "migrate:make": "knex --knexfile config/knexfile.ts migrate:make",
@@ -19,8 +19,8 @@
         "test": "cross-env NODE_ENV=test mocha --exclude=client/node_modules/**",
         "test:ci": "npm run migrate && npm run test -- --forbid-only",
         "test:coverage": "cross-env NODE_ENV=test nyc mocha",
-        "postinstall": "npm run migrate && npm run seed",
-        "assetsdiscovery": "cross-env NODE_ENV=production INTERVAL=2000 node ./build/server/runnerAppAssetsDiscovery.js"
+        "create:db": "node ./create-db.js",
+        "assetsdiscovery": "cross-env NODE_ENV=production INTERVAL=2000 node ./build/server/runnerAssetsDiscovery.js"
     },
     "author": "Vladlen Fedosov",
     "license": "Apache-2.0",
@@ -33,11 +33,11 @@
         "@types/express-session": "^1.17.0",
         "@types/is-valid-domain": "0.0.0",
         "@types/joi": "^14.3.4",
-        "@types/lodash": "^4.14.155",
+        "@types/lodash": "4.14.155",
         "@types/mocha": "^7.0.1",
         "@types/newrelic": "^6.2.0",
         "@types/nock": "^11.1.0",
-        "@types/passport": "^1.0.3",
+        "@types/passport": "1.0.8",
         "@types/passport-http-bearer": "^1.0.35",
         "@types/passport-local": "^1.0.33",
         "@types/sinon": "^9.0.4",

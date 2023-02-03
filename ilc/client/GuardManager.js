@@ -1,5 +1,6 @@
 import errors from '../common/guard/errors';
 import actionTypes from '../common/guard/actionTypes';
+import { Logger } from './utils';
 
 export default class GuardManager {
     #router;
@@ -7,7 +8,7 @@ export default class GuardManager {
     #errorHandler;
     #logger;
 
-    constructor(router, pluginManager, errorHandler, logger = window.console) {
+    constructor(router, pluginManager, errorHandler, logger = Logger) {
         this.#router = router;
         this.#transitionHooksPlugin = pluginManager.getTransitionHooksPlugin();
         this.#errorHandler = errorHandler;

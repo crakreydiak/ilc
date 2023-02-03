@@ -1,5 +1,5 @@
 {
-    "name": "e2e",
+    "name": "@crakmedia-repo/cfa-e2e",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",

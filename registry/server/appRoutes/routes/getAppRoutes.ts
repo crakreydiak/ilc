@@ -27,6 +27,7 @@ const getAppRoutes = async (req: Request, res: Response) => {
         query.where('domainId', filters.domainId)
     }
 
+    // @ts-ignore
     const appRoutes = await query.range(req.query.range as string | undefined);
 
     appRoutes.data = transformSpecialRoutesForConsumer(appRoutes.data)

@@ -57,9 +57,12 @@ module.exports = class ServerRouter {
             delete ssrOpts.ignoreInvalidSsl;
 
             const fragmentKind = row.kind || appInfo.kind;
+            const excludedRenderer = row.appName.includes('store-renderer');
             if (fragmentKind === 'primary' && primarySlotDetected === false) {
                 ssrOpts.primary = true;
                 primarySlotDetected = true;
+            } else if ((fragmentKind === 'regular' || fragmentKind === 'essential') && !excludedRenderer) {
+                ssrOpts.primary = true;
             } else {
                 if (fragmentKind === 'primary') {
                     this.#logger.warn(
@@ -75,6 +78,7 @@ module.exports = class ServerRouter {
                 row.props || {}
                 ]);
             ssrOpts.wrapperConf = row.wrapperConf;
+            ssrOpts.spaBundleUrl = appInfo.spaBundle;
 
             res[appId] = ssrOpts;
 
