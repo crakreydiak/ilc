@@ -1,0 +1,9 @@
+resources:
+- overlays/${APP_DEPLOY_ENV}
+
+namespace: "ingress-${APP_NAME}"
+nameSuffix: "-${APP_NAME}-v2"
+
+commonLabels:
+  app.kubernetes.io/name: ${APP_NAME}-v2
+  app.kubernetes.io/part-of: ingress

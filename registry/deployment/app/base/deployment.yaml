@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/tier: frontend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/tier: frontend
+    spec:
+      containers:
+        - name: app
+          image: image:staging
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: config
+          resources:
+            limits:
+              cpu: 600m
+              memory: 250Mi
+            requests:
+              cpu: 100m
+              memory: 125Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+spec:
+  selector:
+    app.kubernetes.io/tier: frontend
+  ports:
+    - port: 80
+      targetPort: 4001
+      protocol: TCP
+      name: http

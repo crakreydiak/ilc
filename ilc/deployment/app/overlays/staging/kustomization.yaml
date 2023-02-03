@@ -1,0 +1,13 @@
+# Always use base manifests
+resources:
+  - ../../base
+
+patches:
+  - horizontal_pod_autoscaler.yaml
+  - ingress-v2.yaml
+
+configMapGenerator:
+  - name: config
+    behavior: merge
+    envs:
+      - config.properties

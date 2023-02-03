@@ -1,0 +1,11 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-v2
+  annotations:
+    nginx.ingress.kubernetes.io/whitelist-source-range: 64.187.176.194/32
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      location ~ robots.txt {
+        add_header  Content-Type  text/plain;
+        return 200 "User-agent: *\nDisallow: /\n";
+      }

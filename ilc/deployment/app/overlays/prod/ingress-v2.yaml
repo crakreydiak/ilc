@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-v2
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: true
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      location ~ robots.txt {
+        add_header  Content-Type  text/plain;
+        return 200 "User-agent: *\nDisallow: /*out/*\nDisallow: /*join/*\nDisallow: /*login*\nDisallow: /*login.php*\nDisallow: /*register*\nDisallow: /*signup*\nDisallow: /*docs/*\nDisallow: /cam2/*\nDisallow: /pornstar2/*\nDisallow: *wl*\nDisallow: /*cam=*\nDisallow: /*transaction_id=*\nDisallow: /*form=*\nDisallow: /*pname=*\nDisallow: /*url=*\nDisallow: /*img=*\nDisallow: /*ga=*\nDisallow: /*check=*\nDisallow: /*smid=*\nDisallow: /*display=*\nDisallow: /*flow=*\nDisallow: /*up=*\nDisallow: /*imgfrm=*\nDisallow: /*vidfrm=*\nDisallow: /*ov=*\nDisallow: /*gpos=*\nDisallow: /*vidhp=*\nDisallow: /*target=*\nDisallow: /*mode=*\nDisallow: /*pn=*\nDisallow: /*psp=*\nDisallow: /*s=*\nDisallow: /*name=*\nDisallow: /*url=*\nSitemap: https://jerkmate.com/sitemap-en.xml\n";
+      }
+spec:
+  tls:
+    - hosts:
+        - craklabel.production.jmclcom.com
+      secretName: jmclcom-tls
+  rules:
+    - host: craklabel.production.jmclcom.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app
+                port:
+                  number: 80

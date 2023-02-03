@@ -1,0 +1,31 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: nginx-configuration
+data:
+  server-tokens: 'false'
+  http-snippet: |
+      server {
+        listen 18080;
+
+        location /nginx_status {
+          stub_status on;
+        }
+
+        location / {
+          return 404;
+        }
+      }
+  log-format-upstream: $proxy_add_x_forwarded_for - $request_id - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" $request_length $request_time $proxy_upstream_name $upstream_addr
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: tcp-services
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: udp-services

@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  registry-db:
+    build:
+      context: prisma
+      dockerfile: Dockerfile
+    container_name: registry-db
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_HOST: 127.0.0.1
+      MYSQL_DATABASE: ilc
+      MYSQL_ROOT_PASSWORD: pwd
+    volumes:
+      - ./dbfiles:/var/lib/mysql

@@ -1,0 +1,166 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../src/prisma/client"
+  binaryTargets = ["native", "linux-musl", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model apps {
+  name                     String        @id @db.VarChar(50)
+  spaBundle                String        @db.VarChar(255)
+  cssBundle                String?       @db.VarChar(255)
+  dependencies             Json?
+  ssr                      Json?
+  props                    Json?
+  assetsDiscoveryUrl       String?       @db.VarChar(255)
+  assetsDiscoveryUpdatedAt Int?
+  kind                     apps_kind     @default(regular)
+  configSelector           String?       @db.VarChar(255)
+  wrappedWith              String?       @db.VarChar(50)
+  ssrProps                 Json?
+  discoveryMetadata        Json?
+  adminNotes               String?       @db.Text
+  apps                     apps?         @relation("appsToapps_wrappedWith", fields: [wrappedWith], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "apps_wrappedwith_foreign")
+  other_apps               apps[]        @relation("appsToapps_wrappedWith")
+  route_slots              route_slots[]
+
+  @@index([wrappedWith], map: "apps_wrappedwith_foreign")
+}
+
+model auth_entities {
+  id         Int     @id @default(autoincrement()) @db.UnsignedInt
+  identifier String  @db.VarChar(255)
+  secret     String? @db.VarChar(255)
+  provider   String? @db.VarChar(20)
+  role       String? @db.VarChar(20)
+  meta       Json?
+
+  @@unique([provider, identifier], map: "auth_entities_provider_identifier_unique")
+}
+
+model knex_migrations {
+  id             Int      @id @default(autoincrement()) @db.UnsignedInt
+  name           String?  @db.VarChar(255)
+  batch          Int?
+  migration_time DateTime @default(now()) @db.Timestamp(0)
+}
+
+model knex_migrations_lock {
+  index     Int  @id @default(autoincrement()) @db.UnsignedInt
+  is_locked Int?
+}
+
+model route_slots {
+  id      Int               @id @default(autoincrement()) @db.UnsignedInt
+  routeId Int               @db.UnsignedInt
+  name    String            @db.VarChar(255)
+  appName String            @db.VarChar(50)
+  props   Json?
+  kind    route_slots_kind?
+  apps    apps              @relation(fields: [appName], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "route_slots_appname_foreign")
+  routes  routes            @relation(fields: [routeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "route_slots_routeid_foreign")
+
+  @@index([appName], map: "route_slots_appname_foreign")
+  @@index([routeId], map: "route_slots_routeid_foreign")
+}
+
+model router_domains {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  domainName  String    @db.VarChar(255)
+  template500 String    @db.VarChar(50)
+  templates   templates @relation(fields: [template500], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "router_domains_template500_foreign")
+  routes      routes[]
+
+  @@index([template500], map: "router_domains_template500_foreign")
+}
+
+model routes {
+  id             Int             @id @default(autoincrement()) @db.UnsignedInt
+  orderPos       Int?
+  route          String          @db.VarChar(255)
+  next           Boolean         @default(false)
+  templateName   String?         @db.VarChar(50)
+  meta           String?         @db.Text
+  domainId       Int?            @db.UnsignedInt
+  domainIdIdxble Int?
+  router_domains router_domains? @relation(fields: [domainId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "routes_domainid_foreign")
+  templates      templates?      @relation(fields: [templateName], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "routes_templatename_foreign")
+  route_slots    route_slots[]
+
+  @@unique([orderPos, domainIdIdxble], map: "routes_orderpos_and_domainIdIdxble_unique")
+  @@index([domainId], map: "routes_domainid_foreign")
+  @@index([templateName], map: "routes_templatename_foreign")
+}
+
+model sessions {
+  sid     String   @id @db.VarChar(255)
+  sess    Json
+  expired DateTime @db.DateTime(0)
+
+  @@index([expired], map: "sessions_expired_index")
+}
+
+model settings {
+  key     String         @unique(map: "settings_key_unique") @db.VarChar(50)
+  value   String?        @db.Text
+  default String?        @db.Text
+  scope   settings_scope @default(registry)
+  secret  Boolean        @default(false)
+  meta    Json?
+}
+
+model shared_libs {
+  name                     String  @unique(map: "shared_libs_name_unique") @db.VarChar(50)
+  spaBundle                String  @db.VarChar(255)
+  assetsDiscoveryUrl       String? @db.VarChar(255)
+  assetsDiscoveryUpdatedAt Int?
+  adminNotes               String? @db.Text
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model shared_props {
+  name     String @db.VarChar(255)
+  props    Json
+  ssrProps Json?
+
+  @@ignore
+}
+
+model templates {
+  name           String           @unique(map: "templates_name_unique") @db.VarChar(50)
+  content        String           @db.Text
+  router_domains router_domains[]
+  routes         routes[]
+}
+
+model versioning {
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  entity_type String   @db.VarChar(255)
+  entity_id   String   @db.VarChar(255)
+  data        String?  @db.Text
+  data_after  String?  @db.Text
+  created_by  String   @db.VarChar(255)
+  created_at  DateTime @default(now()) @db.Timestamp(0)
+}
+
+enum apps_kind {
+  primary
+  essential
+  regular
+  wrapper
+}
+
+enum route_slots_kind {
+  primary
+  essential
+  regular
+}
+
+enum settings_scope {
+  ilc
+  registry
+}

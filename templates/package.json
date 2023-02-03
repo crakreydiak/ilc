@@ -1,0 +1,19 @@
+{
+  "name": "@crakmedia-repo/templates",
+  "version": "1.0.0",
+  "description": "Package responsible for templates manipulation in the registry. Templates as a code.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@crakmedia-repo/registry-cli": "^3.0.3",
+    "axios": "^0.24.0",
+    "globby": "11.0.4",
+    "lodash.pick": "^4.4.0",
+    "object-hash": "^2.2.0"
+  }
+}

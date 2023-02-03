@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Google Tag Manager -->
+    <script>
+      window.dataLayer = [
+        {
+          event: "UA_CRData",
+          optimizeContainerId: "GTM-PQ247K6",
+          UA_ID: "UA-28809296-8",
+          GA4_ID: "G-D55H7M1NJ7",
+        },
+      ];
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-5S82SL8");
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,width=device-width"
+    />
+
+    <link rel="shortcut icon" href="/ui-contents/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" href="/theme.min.css" />
+
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-medium);
+      }
+      .container p a:hover {
+        color: var(--positive) !important;
+      }
+      .container li a:hover {
+        color: var(--positive) !important;
+      }
+      .container header {
+        padding: var(--spacing-medium) 0;
+      }
+      .container header .logo div {
+        position: relative;
+        width: 100%;
+        max-width: 376px;
+      }
+      .container header .logo div:before {
+        display: block;
+        content: "";
+        padding-top: 8.51064%;
+      }
+      .container header .header-cell {
+        display: flex;
+        align-items: center;
+      }
+      .container header .header-cell .icon {
+        vertical-align: top;
+        width: var(--icon-large);
+        height: var(--icon-large);
+        fill: var(--neutral);
+        transition: transform 0.1s ease-in 0s;
+      }
+      .container header .logo-exposedwebcams {
+        margin-right: auto;
+        flex-basis: 23.5rem;
+        width: 100%;
+      }
+      .container header .login {
+        text-transform: uppercase;
+        font-size: var(--text-font-size-small);
+        line-height: var(--text-line-height-small);
+        font-weight: var(--text-font-weight-small);
+        font-style: var(--text-font-style-small);
+        color: var(--text-secondary-color);
+      }
+      .container header .login .link {
+        font-weight: var(--link-primary-font-weight);
+        color: var(--link-primary-color);
+        text-decoration: var(--link-primary-text-decoration);
+        text-transform: uppercase;
+        transition: color var(--transition-speed) var(--transition-timing);
+      }
+      .container header .button {
+        display: block;
+        font-size: var(--text-font-size-small);
+        background-color: var(--button-primary-bg-color);
+        color: var(--button-primary-color);
+        border: var(--button-primary-border-width) solid
+          var(--button-primary-border-color);
+        border-radius: var(--button-primary-radius);
+        font-weight: var(--button-primary-font-weight);
+        text-transform: var(--button-primary-text-transform);
+        text-decoration: var(--button-primary-text-decoration);
+        padding: var(--spacing-small) var(--spacing-medium);
+        transition: color var(--transition-speed) var(--transition-timing),
+          border-color var(--transition-speed) var(--transition-timing),
+          background-color var(--transition-speed) var(--transition-timing);
+      }
+      .container header .button:hover {
+        background-color: var(--button-primary-hover-bg-color);
+        color: var(--button-primary-hover-color);
+        text-decoration: var(--button-primary-hover-text-decoration);
+        border-color: var(--button-primary-hover-border-color);
+      }
+      .container .drawer-header {
+        inset: 3.9rem 0px 47px;
+        position: fixed;
+        z-index: -1;
+        transition: opacity var(--transition-speed) var(--transition-timing);
+        opacity: 0;
+        background-color: var(--monochrome-0-75);
+      }
+      .container .mobile-menu {
+        position: fixed;
+        inset: 3.9rem 0px 47px;
+        visibility: hidden;
+        z-index: -1;
+        max-width: 30rem;
+        margin-right: 17vw;
+      }
+      .container .mobile-menu .menu-nav {
+        padding: 0px;
+        box-shadow: none;
+        background: var(--neutral-alt);
+      }
+      .container .column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: var(--spacing-large) 0 3em;
+      }
+      .container .full-screen-box {
+        height: calc(100vh - 20em);
+        min-height: calc(100vh - 20em);
+        background-image: url("https://exposedwebcams.webdev.staging.hydrahub.io/generic-page/server-error/BgDesktop.jpg");
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+      .container .full-screen-box h2 {
+        font-weight: 500;
+        text-align: center;
+        font-size: var(--title-font-size-small);
+        padding: 400px 0 0;
+        margin-bottom: var(--spacing-large);
+      }
+      .container .full-screen-box .go-home-button {
+        cursor: pointer;
+        text-align: center;
+        margin: var(--spacing-large) 0;
+        text-transform: uppercase;
+        background-color: var(--button-tertiary-bg-color);
+        color: var(--button-tertiary-color);
+        font-weight: var(--button-tertiary-font-weight);
+        font-size: var(--button-tertiary-font-size-medium);
+        padding: var(--spacing-small) var(--spacing-large);
+        border-radius: var(--button-tertiary-radius);
+        text-decoration: var(--button-tertiary-text-decoration);
+      }
+      @media (max-width: 767px) {
+        .container .column {
+          margin: var(--spacing-large) 0 0;
+        }
+        .container .full-screen-box .go-home-button {
+          width: 100%;
+        }
+        .container .full-screen-box {
+          background-size: cover;
+          height: calc(100vh - 12.1em);
+          min-height: calc(100vh - 12.1em);
+          padding: var(--spacing-large) var(--spacing-large) 0;
+          justify-content: flex-end;
+        }
+      }
+      .container .full-screen-box .go-home-button:hover {
+        background-color: var(--button-tertiary-hover-bg-color);
+        color: var(--button-tertiary-hover-color);
+      }
+      .container .footer {
+        padding: var(--spacing-large) 0;
+      }
+      .container .footer .legal .icon {
+        margin-right: var(--spacing-medium);
+      }
+      .container .footer .legal .icon-rta {
+        fill: var(--secondary);
+        width: 3.06rem;
+        height: 1.1rem;
+      }
+      .container .footer .legal .icon-asacp {
+        fill: var(--secondary);
+        width: 5.31rem;
+        height: 1.1rem;
+      }
+      .container .footer .legal .logo-exposedwebcams {
+        flex-basis: 23.5rem;
+        margin-left: auto;
+      }
+      .container .footer .legal p {
+        font-size: var(--text-font-size-medium);
+        font-weight: var(--text-sub-font-weight-medium);
+        line-height: var(--text-line-height-medium);
+        font-style: var(--text-sub-font-style-medium);
+        text-transform: var(--text-text-transform-medium);
+        color: var(--text-secondary-sub-color);
+      }
+      .container .footer .bottom-link {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: var(--spacing-large);
+      }
+      .container .footer .bottom-link .link {
+        color: var(--link-tertiary-color);
+        text-transform: var(--link-tertiary-text-transform);
+        text-decoration: var(--link-tertiary-text-decoration);
+        font-weight: var(--link-tertiary-font-weight);
+      }
+      .container .footer .bottom-link li {
+        line-height: var(--single-line-text-line-height);
+        padding: 0 var(--spacing-small);
+      }
+      .container .logo-exposedwebcams {
+        position: relative;
+        max-width: 376px;
+      }
+      .container .logo-exposedwebcams:before {
+        display: block;
+        content: "";
+        padding-top: 8.51064%;
+      }
+      .container .logo-exposedwebcams img {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+      }
+      @media screen and (max-width: 1024px) {
+        .container {
+          padding: 0;
+        }
+        .container header {
+          display: grid;
+          grid-template-columns: 22.5% 55% 22.5%;
+          grid-auto-rows: fit-content(1em);
+          padding: var(--spacing-medium) var(--spacing-small);
+        }
+        .container header .header-button {
+          margin-right: var(--spacing-small);
+        }
+        .container header .header-right {
+          justify-content: flex-end;
+          width: 100%;
+        }
+        .container header .header-cell {
+          justify-content: flex-start;
+          width: 100%;
+          margin: auto;
+        }
+        .container header .login,
+        .container header .button {
+          display: none;
+        }
+        .container .mobile-menu-open {
+          z-index: 12;
+          visibility: visible;
+        }
+        .container .full-screen-box {
+          background-image: url("https://exposedwebcams.webdev.staging.hydrahub.io/generic-page/server-error/BgMobile.jpg");
+          background-repeat: no-repeat;
+          background-position: center;
+        }
+        .container .mobile-menu-open .top-btn-ctn {
+          display: flex;
+        }
+        .container .mobile-menu-open .menu-nav {
+          padding: 0px;
+          box-shadow: none;
+          background: var(--neutral-alt);
+          height: 100%;
+        }
+        .container .mobile-menu-open .mobile-menu-box {
+          padding: var(--spacing-small);
+          color: var(--link-tertiary-color);
+          text-decoration: var(--link-tertiary-text-decodation);
+          flex-basis: 50%;
+        }
+        .container .mobile-menu-open .mobile-menu-signup {
+          border-right: 1px solid var(--neutral-50);
+        }
+        .container .mobile-menu-open .mobile-menu-signup svg {
+          margin-right: var(--spacing-small);
+          fill: var(--tertiary);
+          height: var(--icon-small);
+          width: var(--icon-small);
+        }
+        .container .mobile-menu-open .mobile-menu-login svg {
+          margin-right: var(--spacing-small);
+          fill: var(--primary);
+          height: var(--icon-small);
+          width: var(--icon-small);
+        }
+        .container .mobile-cta {
+          text-align: center;
+          text-decoration: var(--button-secondary-text-decoration);
+          text-transform: var(--button-secondary-text-transform);
+          transition: background-color var(--transition-speed)
+              var(--transition-timing),
+            color var(--transition-speed) var(--transition-timing);
+          font-weight: var(--button-secondary-font-weight);
+          background-color: var(--button-secondary-bg-color);
+          color: var(--button-secondary-color);
+          padding: var(--spacing-small) var(--spacing-medium);
+          font-size: var(--button-secondary-font-size-large);
+          position: fixed;
+          bottom: 0px;
+          left: 0px;
+          right: 0px;
+          z-index: 100;
+        }
+        .container .footer {
+          border-top: 1px solid var(--neutral);
+          margin: 0 var(--spacing-small) calc(1.25rem + var(--button-secondary-font-size-large));
+        }
+        .container .footer .legal {
+          text-align: center;
+        }
+        .container .footer .legal .icon {
+          margin-bottom: var(--spacing-large);
+        }
+        .container .footer .legal .icon.icon-rta,
+        .container .footer .legal .icon.icon-asacp {
+          margin-left: var(--spacing-small);
+          margin-right: var(--spacing-small);
+        }
+        .container .footer .legal .logo-exposedwebcams {
+          display: none;
+        }
+        .container .footer .bottom-link {
+          gap: var(--spacing-medium) 0;
+          justify-content: center;
+        }
+      }
+      @media screen and (min-width: 1025px) {
+        .container header {
+          display: flex;
+          align-items: center;
+        }
+        .container header .header-button {
+          display: none;
+        }
+        .container header .header-right {
+          text-align: center;
+        }
+        .container header .logo {
+          margin-right: auto;
+          flex-basis: 23.5rem;
+        }
+        .container .drawer-header {
+          display: none;
+        }
+        .container .mobile-menu {
+          display: none;
+        }
+        .container .mobile-cta {
+          display: none;
+        }
+        .container .footer .legal {
+          display: flex;
+          align-items: center;
+        }
+        .container .footer .bottom-link {
+          padding-top: var(--spacing-large);
+          border-top: 1px solid var(--neutral);
+        }
+        .container .footer .bottom-link li {
+          padding-left: 0px;
+        }
+      }
+    </style>
+
+    <link
+      media="print"
+      onload='this.onload=null,this.removeAttribute("media")'
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap"
+        rel="stylesheet"
+        type="text/css"
+      />
+    </noscript>
+    <script>
+      if (!window.dataLayer) window.dataLayer = [];
+    </script>
+  </head>
+
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-5S82SL8"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <svg aria-hidden="true" viewBox="0 0 64 64" style="display: none">
+      <symbol id="icon-preset-menu-burger">
+        <path
+          d="M38.35,10A4.21,4.21,0,0,0,42,6.08,4.41,4.41,0,0,0,38.35,2H5.73A4.12,4.12,0,0,0,2,5.78v.14a4.28,4.28,0,0,0,3.67,4Z"
+        ></path>
+        <path
+          d="M58.27,35A4.24,4.24,0,0,0,62,31.06h0A4.43,4.43,0,0,0,58.27,27H5.82A4.15,4.15,0,0,0,2,30.76v.17C2,34,4.05,35,5.75,35Z"
+        ></path>
+        <path
+          d="M58.27,62.19A4.21,4.21,0,0,0,62,58.31v0a4.42,4.42,0,0,0-3.73-4.06H5.87C4.37,54.08,2,55.72,2,57.88A4.09,4.09,0,0,0,5.8,62.2Z"
+        ></path>
+      </symbol>
+      <symbol id="icon-preset-erase">
+        <path
+          d="M37.68,31.72,61.24,8.16a3.79,3.79,0,0,0-5.3-5.3L32.39,26.42,8.83,2.86a3.79,3.79,0,0,0-5.3,5.3L27.09,31.72,3.53,55.29a3.77,3.77,0,0,0-.78,5.29c1.24,1.68,4.51,1.83,6.08,0L32.39,37,55.94,60.57a3.78,3.78,0,0,0,5.3-5.29Z"
+        ></path>
+      </symbol>
+    </svg>
+
+    <div>ERROR 500</div>
+  </body>
+</html>
